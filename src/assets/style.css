@@ -1,0 +1,83 @@
+/* .btn1{
+    color: red;
+}
+th{
+    background-color: "#007ebd";
+  } */
+.courseTable{
+    border-collapse: collapse;
+    text-align: center;
+}
+  .courseTable th{
+    font-size: 17px;
+    /* background-color: #575757; */
+    background-color: #007ebd;
+    border-color: rgba(0, 0, 0, 100);
+    color: rgb(238, 237, 237);
+    padding: 3px;
+}
+.courseTable td{
+    font-size: 16px;
+    /* border-color: #004669; */
+     border: 1px solid #004669;
+    padding: 1px;
+}
+/* .courseTable td button{
+    margin-left: 2px;
+    outline: none;
+    border: none;
+    color: black;
+    scale: 1.2;
+    background-color: transparent;
+    align-self: center;
+} */
+
+.btn1{
+    color: rgb(56, 56, 56);
+    /* background-color: #3c8dbc; */
+    
+    padding: 9px 25px;
+    /* background-color: rgba(0, 136, 169, 1); */
+    outline: #51bc3c;
+    border-width: thin;
+    border-color: #989898;
+    border-radius: 5px;
+    /* cursor: pointer; */
+    transition: all 0.3s ease 0s;
+    /* gap: 10px; */
+    margin: 10px 0;
+}
+.btn1:hover{
+    cursor: pointer;
+    background: #a0a0a0;
+}
+
+.btnGenerate{
+    /* margin-top: 10px; */
+    width: 100%;
+    color: white;
+    border: none;
+    font-size: 16px;
+    background-color: #0170a8;
+    /* background-color: #004669; */
+    border-radius: 5px;
+    padding: 7px;
+    margin-left: 10px;
+    transition: 0.5s;
+}
+.btnGenerate:hover{
+    background-color: #004669;
+    
+}
+.favBtn{
+    padding: 9px 25px;
+    background-color: rgba(0, 136, 169, 1);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    color: white;
+}
+.favBtn:hover{
+    background-color: rgba(0, 136, 169, 0.8);
+}
