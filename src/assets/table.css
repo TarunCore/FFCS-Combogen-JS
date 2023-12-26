@@ -42,3 +42,32 @@
     vertical-align: middle; 
     padding: 3px; width: 50px;
 }
+
+
+.detailsTable th{
+    font-size: 17px;
+    background-color: rgb(57, 168, 194);
+    color: white;
+    padding: 3px;
+}
+.detailsTable{
+    text-align: center;
+    width: 100%;
+    border-collapse: collapse;
+
+}
+
+.moveBtn{
+    background-color: #55cf3d;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    border-radius: 5px;
+    color: white;
+    overflow: hidden;
+    padding: 5px 9px;
+    transition: .3s;
+}
+.moveBtn:hover{
+    background-color: #51bc3c;
+}

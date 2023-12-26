@@ -1,8 +1,135 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import "../assets/table.css"
+import { favouriteState } from "../store/atoms/favourites";
+import { generateState } from "../store/atoms/generate";
+import { generateFullState } from "../store/atoms/generateFull";
 function TimeTable(){
-    return(
-        <div id="belowTable" style={{paddingBottom: "30px", width:"100%"}}>
+    // const generateData = useRecoilValue(generateState);
+    const generateDataFull = useRecoilValue(generateFullState);
+    const [curTable, setCurTable] = useState(null);
+    const [posOfTT, setPosOfTT] = useState(0);
+    const [dir, setDir] = useState(0);
+    const [favs, setFavs] = useRecoilState(favouriteState);
+    
+    // useEffect(()=>{
+    //     if(generateData!=null){
+    //         if(posOfTT+dir!=-1 && posOfTT+dir!=generateData.length){
+    //             generateData[posOfTT].forEach((slot)=>{
+    //                 const cell = document.getElementById(slot);
+    //                 cell.style.backgroundColor = "transparent";
+    //             })
+    //             generateData[posOfTT+dir].forEach((slot)=>{
+    //                 const cell = document.getElementById(slot);
+    //                 cell.style.backgroundColor = "#CCFF33";
+    //             })
+    //             setPosOfTT(posOfTT+dir) 
+    //             setCurTable({all: generateDataFull.all[posOfTT+dir], courseNames: generateDataFull.courseNames})
+    //             if(dir!=0){
+    //                 setDir(0)
+    //             }
+    //         }
+    //     }
+    // }, [generateData, dir])
+    const handleFavClick = async()=>{
+        let indOfFav=[...favs.indOfFav];
+        if(indOfFav[posOfTT]==true){
+            try{
+                indOfFav[posOfTT]=false;
+                // HANDLE THE DISLIKE
+                let liked=favs.liked.filter((data)=> !(data.id==posOfTT));
+                let newIds = [...favs.ids]
+                
+                const response = await axios.delete("http://localhost:3000/me/favourites/delete", {
+                    data: {
+                        id: newIds[posOfTT],
+                    },
+                    headers: {
+                        Authorization: "token " + localStorage.getItem("token"),
+                        "Content-Type": "application/json",
+                    },
+                });
+                if(response.data.message){
+                    newIds[posOfTT]="";
+                    setFavs({
+                        indOfFav:indOfFav,
+                        liked:liked,
+                        ids: newIds
+                    })
+                }
+            }catch(e){
+                alert("Delete failed")
+            }
+            
+
+        }else{
+            try{
+                indOfFav[posOfTT]=true;
+                let liked=[...favs.liked];
+                const responce = await axios.post("http://localhost:3000/me/favourites/save",{
+                    timetable:{
+                        TTdata: generateDataFull.all[posOfTT], 
+                        courseNames:generateDataFull.courseNames
+                    }     
+                },{
+                    headers:{
+                        "Authorization":"token "+localStorage.getItem("token"),
+                        "Content-Type": "application/json"
+                    }
+                })
+                let newIds=[...favs.ids];
+                if(responce.data.id){
+                    newIds[posOfTT]=responce.data.id;
+                    liked.push({id:posOfTT,fullData:{TTData: generateDataFull.all[posOfTT], courseNames:generateDataFull.courseNames}})
+                    setFavs({
+                        indOfFav:indOfFav,
+                        liked:liked,
+                        ids: newIds
+                    })
+                }
+            }catch(e){
+                alert("Save failed")
+            }
+            
+            
+        }
         
+    }
+    
+    useEffect(()=>{
+        if(generateDataFull!=null){
+            if(posOfTT+dir!=-1 && posOfTT+dir!=generateDataFull.slotsToPaint.length){
+                generateDataFull.slotsToPaint[posOfTT].forEach((slot)=>{
+                    const cell = document.getElementById(slot);
+                    cell.style.backgroundColor = "transparent";
+                })
+                generateDataFull.slotsToPaint[posOfTT+dir].forEach((slot)=>{
+                    const cell = document.getElementById(slot);
+                    cell.style.backgroundColor = "#CCFF33";
+                })
+                setPosOfTT(posOfTT+dir) 
+                setCurTable({all: generateDataFull.all[posOfTT+dir], courseNames: generateDataFull.courseNames})
+                if(dir!=0){
+                    setDir(0)
+                }
+            }
+        }
+    }, [generateDataFull, dir])
+    return(
+        <div>
+            <div style={{display:"flex", justifyContent:"center"}}>
+                <div style={{display:"flex", justifyContent:"space-between",width: 800}}>
+                    <button type="button" className="moveBtn" onClick={()=>{setDir(-1)}}>Prev</button>
+                    <button type="button" className="moveBtn" style={{width:70}} onClick={handleFavClick} >{(favs && favs.indOfFav[posOfTT]==true) ? "Liked":"Like" }</button>
+                {favs && posOfTT+1+"/"+favs.indOfFav.length}
+                    <button type="button" className="moveBtn" onClick={()=>{setDir(1)}}>Next</button>
+                </div>
+            </div>
+        <div id="belowTable" style={{paddingBottom: "30px", width:"100%"}}>
+            {/* {JSON.stringify(generateData)} */}
+            {generateDataFull && JSON.stringify(generateDataFull.slotsToPaint)}
+            {curTable && JSON.stringify(curTable.courseNames)}
                         <table id="timeTableStyle" className="velloreTable" style={{border: "2px solid #3c8dbc", textAlign: "center", fontSize: "12px", marginBottom: "20px",width:"100%", borderCollapse: "collapse", marginTop: "20px"}}>
                                             
                             <tbody><tr>	
@@ -313,6 +440,29 @@ function TimeTable(){
                   
                         </tbody></table>   
         </div>
+        <DetailsTable curTable={curTable}/>
+    </div>
     )
+}
+
+function DetailsTable({curTable}){
+    return <table className="detailsTable"     border="1px solid black">
+    <thead>
+        <tr>
+            <th style={{width: "30%"}}>Course Name</th>
+            <th style={{width: "30%"}}>Slots</th>
+            <th style={{width: "40%"}}>Faculty Name</th>
+        </tr>
+    </thead>
+    <tbody>
+    {curTable!=null && curTable.all.map((table, index)=>{
+            return <tr key={curTable.courseNames[index]+table.faculty+table.facultySlot}>
+                    <td>{curTable.courseNames[index]}</td>
+                    <td>{table.faculty}</td>
+                    <td>{table.facultySlot}</td>
+                </tr>
+        })}
+    </tbody>
+</table>
 }
 export default TimeTable;

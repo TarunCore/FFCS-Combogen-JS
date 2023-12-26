@@ -1,25 +1,49 @@
 import {useRecoilState} from "recoil"
 import TimeTable from "./TimeTable";
 import InputCard from "./InputCard";
+import {CircularProgress} from "@mui/material"
 import { savedCourseState } from "../store/atoms/savedCourses";
 import { useEffect } from "react";
 import axios from "axios";
+import { userState } from "../store/atoms/user";
 function Home() {
     const [savedCourses, setSavedCourses] = useRecoilState(savedCourseState);
+    const [user, setUser] = useRecoilState(userState);
     useEffect(()=>{
         async function init(){
-            const response = await axios.get("http://localhost:3000/me/saved",{
-                headers:{
-                    "Authorization":"Bearer "+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODFiZWRmODY2OGFlNWIwOWYzOWE3OCIsImlhdCI6MTcwMzE1MzEyNCwiZXhwIjoxNzAzMTU2NzI0fQ.E2qmNKMMn_KmNaWy79qC9dhUUucLrtHssRQeZNE_7aw",
-                    "Content-type":"application/json"
+          try{
+            const response = await axios.get("http://localhost:3000/me",{
+              headers:{
+                  "Authorization":"Bearer "+localStorage.getItem("token"),
+                  "Content-type":"application/json"
                 }
             });
-            if(response.data.savedCourseData){
+            if(response.data.userEmail){
+                setUser({
+                    isLoading: false,
+                    userEmail: response.data.userEmail
+                })            
                 setSavedCourses(response.data.savedCourseData)
+            }else{
+                setUser({
+                    isLoading: false,
+                    userEmail: null
+                })
             }
-        }
-        init();
+          }catch(e){
+            setUser({
+                isLoading: false,
+                userEmail: null
+            })
+          }
+      }
+      init();
     },[])
+    if(user.isLoading){
+        return <>
+            <CircularProgress color="secondary" />
+        </>
+    }
     return <div>
         {JSON.stringify(savedCourses)}
         <div style={{width:"100%"}}>

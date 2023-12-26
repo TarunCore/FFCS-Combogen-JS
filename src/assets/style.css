@@ -81,3 +81,18 @@ th{
 .favBtn:hover{
     background-color: rgba(0, 136, 169, 0.8);
 }
+
+.saveBtn{
+    background-color: #55cf3d;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    border-radius: 5px;
+    color: white;
+    overflow: hidden;
+    padding: 5px 9px;
+    transition: .3s;
+}
+.saveBtn:hover{
+    background-color: #51bc3c;
+}

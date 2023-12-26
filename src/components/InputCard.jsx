@@ -1,46 +1,93 @@
 import {Card, Grid, Typography, Autocomplete, TextField, Chip} from "@mui/material"
-import { useEffect, useState, createContext,useContext } from "react";
+import { useEffect, useState, createContext,useContext, useRef } from "react";
 import "../assets/style.css"
 import { savedCourseState } from "../store/atoms/savedCourses";
-import {useRecoilState} from "recoil"
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil"
+import { userState } from "../store/atoms/user";
+import axios from "axios"
+import { generateState } from "../store/atoms/generate";
+import { generateFullState } from "../store/atoms/generateFull";
+import { favouriteState } from "../store/atoms/favourites";
 const courseContext = createContext();
 function InputCard(){
     const [courses, setCourses] = useState([]);
+    const ref=useRef(true);
     const [savedCourses, setSavedCourses] = useRecoilState(savedCourseState);
+    const user = useRecoilValue(userState);
+    const setGenerateData = useSetRecoilState(generateState);
+    const setGenerateFull = useSetRecoilState(generateFullState)
+    const setFavourites = useSetRecoilState(favouriteState);
+    const handleSave = async()=>{
+        try{
+            const responce = await axios.post("http://localhost:3000/me/save",{
+                newSavedData: [...courses]
+            },{
+                headers:{
+                    "Authorization":"token "+localStorage.getItem("token"),
+                    "Content-Type":"application/json"
+                }
+            })
+            if(responce.data.message){
+                console.log(responce.data.message)
+            }
+        }catch(e){
+            console.log(e);
+        }
+    }
     const handleGenerate = async() =>{
         const response = await axios.post("http://localhost:3000/generate",{
                 "slotTime":"MT",
-                "generateData": [
-                    [
-                        {"faculty":"C1T1","facultySlot":["A1","TA1"]}
-                    ],[
-                        {"faculty":"C2T1","facultySlot":["A1","TA1"]},
-                        {"faculty":"C2T2","facultySlot":["B1","TB1"]},
-                        {"faculty":"C2T3","facultySlot":["C1","TC1"]}
-                    ]
-                    ]
+                "generateData": [...courses]
             },{
                 headers:{
                     "Content-type":"application/json"
                 }
             });
             if(response.data.result){
-                
+                const all=response.data.result;
+                let l=[];
+                for(var i=0;i<all.length;i++){
+                    let current_table=[]
+                    for(var j=0;j<all[i].length;j++){
+                        current_table=current_table.concat(all[i][j].facultySlot);
+                    }
+                    l.push(current_table)
+                }
+                setGenerateFull({all:all,courseNames:response.data.courseNames, slotsToPaint: l});
+                setGenerateData(l);
+                // setFavourites(Array(l.length).fill({liked: false, data: null}))
+                let tmp=[],tmp2=[];
+                for(var i=0;i<l.length;i++){
+                    tmp.push(false)
+                    tmp2.push("")
+                }
+                setFavourites({
+                    indOfFav: tmp, 
+                    liked: [],
+                    ids: tmp2
+                })
             }
     }
     useEffect(()=>{
-        for (let i = 0; i < 5; i++) {
-            setCourses(course=>[...course, []])
-            
+        // ref was there
+        setCourses([]);
+        for (let i = 0; i < 10; i++) {
+            if(savedCourses.length==10){
+                setCourses(course=>[...course, [...savedCourses[i]]])
+            }else{
+                setCourses(course=>[...course, []])
+            }
         }
-    },[])
-    return <div style={{width: "800px", borderRadius:"10px" }}>
+        
+    },[user])
+    return <div style={{maxWidth: "900px", borderRadius:"10px" }}>
                 {/* {JSON.stringify(courses)} */}
+                
         <Card variant="outlined" sx={{minWidth:"600px",padding:2, backgroundColor:"rgb(233, 233, 233)", borderRadius:"10px", border:"1px solid grey"}}>
-            <courseContext.Provider value={{courses: courses, setCourses: setCourses}}>
+            <courseContext.Provider value={{courses: courses, setCourses: setCourses, savedCourses: savedCourses, handleSave:handleSave}}>
             <div>
                 <Typography variant="h6">SELECT COURSES</Typography>
-                
+                <button type="button" className="saveBtn" onClick={handleSave}>Save</button>
                 {[...Array(10).keys()].map((index)=>{
                     return <InputBox id={index} key={index}></InputBox>
                 })}
@@ -52,16 +99,27 @@ function InputCard(){
 }
 
 function InputBox({id}){
-    const {courses, setCourses} = useContext(courseContext);
+    const {courses, setCourses, savedCourses} = useContext(courseContext);
     const [teacherName, setTeacherName] = useState("")
     const [slotData, setSlotData] = useState("")
     
     const handleClick = ()=>{
         let oldCourses=[...courses];
-        oldCourses[id].push([teacherName, slotData]);
+        const refractorArr = slotData.flatMap((e) => e.split("+"));
+        oldCourses[id].push({faculty:teacherName, facultySlot:refractorArr});
         setCourses(oldCourses)
     }
-
+    const handleDelete = (faculty, facultySlot) => {
+        // Filter out the item to be deleted from the courses array
+        const updatedCourses = courses[id].filter(item => !(item.faculty === faculty && item.facultySlot === facultySlot));
+        // Update the state with the new array
+        setCourses(prevCourses => {
+            const newCourses = [...prevCourses];
+            newCourses[id] = updatedCourses;
+            return newCourses;
+        });
+        
+    };
     return <div style={{marginTop:"10px"}}>
         {/* {JSON.stringify(slotData)} */}
         <div className="s1" style={{ marginTop: "8px" }}>
@@ -81,12 +139,22 @@ function InputBox({id}){
                 </tr>
             </thead>
             <tbody>
+                {/* {savedCourses.length>=id+1 && savedCourses[id].length>0 && savedCourses[id].map(
+                    (data)=>{
+                        return <tr key={data.faculty+data.facultySlot}>
+                            <td>{data.faculty}</td> 
+                            <td>{JSON.stringify(data.facultySlot)}</td>
+                            <td>
+                                <button type="button">Delete</button>
+                            </td>
+                        </tr>
+                })} */}
                 {courses.length>0 && courses[id].length>0 && courses[id].map((data)=>{
-                    return <tr key={data[0]+data[1]}>
-                        <td>{data[0]}</td> 
-                        <td>{JSON.stringify(data[1])}</td>
+                    return <tr key={data.faculty+data.facultySlot}>
+                        <td>{data.faculty}</td> 
+                        <td>{JSON.stringify(data.facultySlot)}</td>
                         <td>
-                            <button type="button">Delete</button>
+                            <button type="button" onClick={() => handleDelete(data.faculty, data.facultySlot)}>Delete</button>
                         </td>
                     </tr>
                 })}
@@ -94,11 +162,11 @@ function InputBox({id}){
         </table>
     </div>
     <div className="inp" style={{display:"flex"}}>
-        <TextField id="outlined-basic" label="Faculty Name" variant="outlined" sx={{margin:1, backgroundColor:"white"}} onChange={(e)=>{setTeacherName(e.target.value)}} size="normal" />
+        <TextField  label="Faculty Name" variant="outlined" sx={{margin:1, backgroundColor:"white"}} onChange={(e)=>{setTeacherName(e.target.value)}} size="normal" />
         {/* <input className="slotTXT" type="text" placeholder="Slots including lab" id="slots"  style={{ width: '45%' }} onChange={(e)=>setSlotData(e.target.value)}/> */}
         <Autocomplete
         multiple
-        id="tags-outlined"
+        // id="tags-outlined"
         options={slotArray}
         getOptionLabel={(option) => option}
         fullWidth
@@ -115,7 +183,7 @@ function InputBox({id}){
           />
         )}
       />
-        <button type="button" className="btn1" id="btnSlot6" style={{ width: '20%' }} onClick={handleClick}>Add</button>
+        <button type="button" className="btn1"  style={{ width: '20%' }} onClick={handleClick}>Add</button>
     </div>
 </div>
 
