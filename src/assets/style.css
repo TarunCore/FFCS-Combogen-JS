@@ -1,12 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:600&display=swap');
 /* .btn1{
     color: red;
 }
 th{
     background-color: "#007ebd";
   } */
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 10%;
+}
+.container{
+    max-width: 1000px;
+    height: fit-content;
+    width: 100%;
+    background-color: rgb(233, 233, 233);
+    font-family: 'Poppins',sans-serif;
+    padding: 22px 27px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
 .courseTable{
     border-collapse: collapse;
     text-align: center;
+    /* font-family: 'Poppins',sans-serif; */
 }
   .courseTable th{
     font-size: 17px;
@@ -34,17 +55,13 @@ th{
 
 .btn1{
     color: rgb(56, 56, 56);
-    /* background-color: #3c8dbc; */
-    
     padding: 9px 25px;
-    /* background-color: rgba(0, 136, 169, 1); */
     outline: #51bc3c;
     border-width: thin;
     border-color: #989898;
     border-radius: 5px;
     /* cursor: pointer; */
     transition: all 0.3s ease 0s;
-    /* gap: 10px; */
     margin: 10px 0;
 }
 .btn1:hover{
@@ -69,7 +86,7 @@ th{
     background-color: #004669;
     
 }
-.favBtn{
+/* .favBtn{
     padding: 9px 25px;
     background-color: rgba(0, 136, 169, 1);
     border: none;
@@ -79,6 +96,41 @@ th{
     color: white;
 }
 .favBtn:hover{
+    background-color: rgba(0, 136, 169, 0.8);
+} */
+a, button{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    size: 16px;
+    text-decoration: none;
+}
+.nav_links{
+    
+    list-style: none;
+}
+.nav_links li{
+    display: inline-block;
+    padding: 0px 20px 0px 6px;
+}
+.nav_links a{
+    color: #007ebd;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    margin-right: 10px;
+}
+.nav_links a:hover{
+    color: #0088a9;
+}
+.nav_links button{
+    color: white;
+    padding: 9px 25px;
+    background-color: rgba(0, 136, 169, 1);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+.nav_links button:hover{
     background-color: rgba(0, 136, 169, 0.8);
 }
 
@@ -95,4 +147,26 @@ th{
 }
 .saveBtn:hover{
     background-color: #51bc3c;
+}
+.inp > input{
+    border: 1px solid #aaa;
+    background-color: #ffffff ;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 4px;
+    margin: 3px 0;
+    color: rgb(0, 0, 0);
+    outline: none;
+    /* border: none; */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    padding: 8px;
+    transition: .3s;
+    box-sizing: border-box;
+}
+
+.inp > input:focus{
+    /* border-color: #86b7fe; */
+    /* border: none; */
+    box-shadow: 0 0 8px 0 #86b7fe;
 }

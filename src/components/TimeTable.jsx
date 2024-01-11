@@ -119,20 +119,20 @@ function TimeTable(){
     return(
         <div>
             <div style={{display:"flex", justifyContent:"center"}}>
-                <div style={{display:"flex", justifyContent:"space-between",width: 800}}>
+                <div style={{display:"flex", justifyContent:"space-between",maxWidth: "900px",height:"50px", width:"100%", padding:"10px"}}>
                     <button type="button" className="moveBtn" onClick={()=>{setDir(-1)}}>Prev</button>
                     <button type="button" className="moveBtn" style={{width:70}} onClick={handleFavClick} >{(favs && favs.indOfFav[posOfTT]==true) ? "Liked":"Like" }</button>
                 {favs && posOfTT+1+"/"+favs.indOfFav.length}
                     <button type="button" className="moveBtn" onClick={()=>{setDir(1)}}>Next</button>
                 </div>
             </div>
-        <div id="belowTable" style={{paddingBottom: "30px", width:"100%"}}>
+        <div id="belowTable" style={{paddingBottom: "30px", width:"100%", overflowX:"auto"}}>
             {/* {JSON.stringify(generateData)} */}
             {generateDataFull && JSON.stringify(generateDataFull.slotsToPaint)}
             {curTable && JSON.stringify(curTable.courseNames)}
-                        <table id="timeTableStyle" className="velloreTable" style={{border: "2px solid #3c8dbc", textAlign: "center", fontSize: "12px", marginBottom: "20px",width:"100%", borderCollapse: "collapse", marginTop: "20px"}}>
+                        <table id="timeTableStyle" className="velloreTable" style={{border: "2px solid #3c8dbc", textAlign: "center", marginBottom: "20px",width:"100%", borderCollapse: "collapse", marginTop: "20px"}}>
                                             
-                            <tbody><tr>	
+                            <tbody><tr className="tableTop">	
                                 <td rowSpan="2" bgcolor="#e2e2e2" className="typeOfClassBoxes">THEORY</td>
                                 
                                 <td bgcolor="#e2e2e2" className="typeOfClassBoxes">Start</td>
@@ -154,7 +154,7 @@ function TimeTable(){
                          
                             </tr>
                             
-                            <tr>
+                            <tr className="tableTop">
                                 <td bgcolor="#e2e2e2" className="typeOfClassBoxes">End</td>
                                                                                     
                                     <td className="labB">08:50</td>
@@ -176,7 +176,7 @@ function TimeTable(){
                             </tr>
                             
                                 
-                            <tr>	
+                            <tr className="tableTop">
                                 <td rowSpan="2" bgcolor="#e2e2e2" className="typeOfClassBoxes">LAB</td>
                                 
                                 <td bgcolor="#e2e2e2" className="typeOfClassBoxes">Start</td>
@@ -199,7 +199,7 @@ function TimeTable(){
                  
                             </tr>
                             
-                            <tr>
+                            <tr className="tableTop">
                                 <td bgcolor="#e2e2e2" className="typeOfClassBoxes">End</td>
                                     <td className="theoV">08:50</td>
                                     <td className="theoV">09:40</td>
@@ -446,7 +446,7 @@ function TimeTable(){
 }
 
 function DetailsTable({curTable}){
-    return <table className="detailsTable"     border="1px solid black">
+    return <table className="detailsTable" border="1px solid black">
     <thead>
         <tr>
             <th style={{width: "30%"}}>Course Name</th>

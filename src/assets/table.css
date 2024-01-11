@@ -54,7 +54,7 @@
     text-align: center;
     width: 100%;
     border-collapse: collapse;
-
+    margin-bottom: 20px;
 }
 
 .moveBtn{
@@ -65,9 +65,23 @@
     border-radius: 5px;
     color: white;
     overflow: hidden;
-    padding: 5px 9px;
+    padding: 5px 12px;
     transition: .3s;
 }
 .moveBtn:hover{
     background-color: #51bc3c;
+}
+#timeTableStyle{
+    font-size: 12px;
+}
+@media screen and (max-width: 600px) {
+    .moveBtn{
+      margin: 0 20px;
+    }
+    /* .tableTop{
+        visibility: collapse;
+    } */
+    #timeTableStyle{
+        font-size: 10px;
+    }
 }

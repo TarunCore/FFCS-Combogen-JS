@@ -41,15 +41,16 @@ function Home() {
     },[])
     if(user.isLoading){
         return <>
-            <CircularProgress color="secondary" />
+            <CircularProgress color="primary" />
         </>
     }
     return <div>
         {JSON.stringify(savedCourses)}
         <div style={{width:"100%"}}>
-            <div  style={{display:"flex", justifyContent:"center"}}>
-                <InputCard></InputCard>
-            </div>
+            {/* <div  style={{display:"flex", justifyContent:"center", boxSizing:"border-box"}}>
+                
+            </div> */}
+            <InputCard></InputCard>
         <TimeTable></TimeTable>
         </div>
             

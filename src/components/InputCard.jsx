@@ -80,21 +80,23 @@ function InputCard(){
         }
         
     },[user])
-    return <div style={{maxWidth: "900px", borderRadius:"10px" }}>
+    return <div className="container" style={{margin:"0 auto"}}>
+        {/* style={{maxWidth: "900px", borderRadius:"10px",width:"100%" }} */}
                 {/* {JSON.stringify(courses)} */}
                 
-        <Card variant="outlined" sx={{minWidth:"600px",padding:2, backgroundColor:"rgb(233, 233, 233)", borderRadius:"10px", border:"1px solid grey"}}>
+        {/* <Card variant="outlined" sx={{padding:"25px 27px", backgroundColor:"rgb(233, 233, 233)", borderRadius:"10px", border:"1px solid grey", fontFamily:"Poppins"}}> */}
             <courseContext.Provider value={{courses: courses, setCourses: setCourses, savedCourses: savedCourses, handleSave:handleSave}}>
-            <div>
-                <Typography variant="h6">SELECT COURSES</Typography>
+            {/* <div> */}
+                {/* <Typography  style={{fontFamily:"Poppins",fontWeight:"800", fontSize:"25px"}}>SELECT COURSES</Typography> */}
+                <div style={{fontFamily:"Poppins",fontWeight:"600", fontSize:"25px"}}s>SELECT COURSES</div>
                 <button type="button" className="saveBtn" onClick={handleSave}>Save</button>
                 {[...Array(10).keys()].map((index)=>{
                     return <InputBox id={index} key={index}></InputBox>
                 })}
-            </div>
+            {/* </div> */}
             </courseContext.Provider>
             <button type="button" className="btnGenerate" onClick={handleGenerate}>Generate</button>
-        </Card>
+        {/* </Card> */}
     </div>
 }
 
@@ -162,15 +164,16 @@ function InputBox({id}){
         </table>
     </div>
     <div className="inp" style={{display:"flex"}}>
-        <TextField  label="Faculty Name" variant="outlined" sx={{margin:1, backgroundColor:"white"}} onChange={(e)=>{setTeacherName(e.target.value)}} size="normal" />
+        <input type="text" placeholder="Faculty name" onChange={(e)=>{setTeacherName(e.target.value)}} style={{ width: '35%' }}/>
+        {/* <TextField  label="Faculty Name" variant="outlined" sx={{margin:1, backgroundColor:"white"}} onChange={(e)=>{setTeacherName(e.target.value)}} size="normal" /> */}
         {/* <input className="slotTXT" type="text" placeholder="Slots including lab" id="slots"  style={{ width: '45%' }} onChange={(e)=>setSlotData(e.target.value)}/> */}
         <Autocomplete
         multiple
         // id="tags-outlined"
         options={slotArray}
         getOptionLabel={(option) => option}
-        fullWidth
-        sx={{margin:1, backgroundColor:"white"}}
+        limitTags={2}
+        sx={{margin:1, backgroundColor:"white", width:"45%"}}
         size="normal"
         onChange={(event, newValue)=>{
             setSlotData(newValue)
